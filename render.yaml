@@ -1,0 +1,23 @@
+databases:
+  - name: rails-user-render # Fill in "name" from the Render PostgreSQL DB you created
+    plan: free
+
+services:
+  - type: web
+    name: rails-user-app # Fill in a name for your web app
+    runtime: ruby
+    plan: free
+    region: oregon # Fill in "region" to match the Render PostgreSQL DB's Region -- Options are oregon (default), ohio, virginia, frankfurt, singapore
+    buildCommand: "./bin/render-build.sh" # This runs the script file we created
+    startCommand: "bundle exec rails server"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rails-user-render # Fill in "name" from the Render PostgresQL DB you created
+          property: connectionString
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: WEB_CONCURRENCY
+        value: 2 # sensible default
